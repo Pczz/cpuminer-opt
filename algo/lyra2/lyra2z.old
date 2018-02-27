@@ -12,8 +12,7 @@ bool lyra2z_thread_init()
 //   const int64_t ROW_LEN_INT64 = BLOCK_LEN_INT64 * 8; // nCols
 //   const int64_t ROW_LEN_BYTES = ROW_LEN_INT64 * 8;
 //   int i = (int64_t)ROW_LEN_BYTES * 8; // nRows;
-
-   const int i = BLOCK_LEN_INT64 * 2  * 330 * 256;
+   const int i = BLOCK_LEN_INT64 * 8 * 8 * 8;
    lyra2z_matrix = _mm_malloc( i, 64 );
    return lyra2z_matrix;
 }
@@ -39,7 +38,7 @@ void lyra2z_hash( void *state, const void *input )
         sph_blake256( &ctx_blake, input + 64, 16 );
         sph_blake256_close( &ctx_blake, hash );
 
-        LYRA2Z( lyra2z_matrix, hash, 32, input, 80, input, 80, 2, 330, 256);
+        LYRA2Z( lyra2z_matrix, hash, 32, hash, 32, hash, 32, 8, 8, 8);
 
     memcpy(state, hash, 32);
 }
@@ -47,38 +46,39 @@ void lyra2z_hash( void *state, const void *input )
 int scanhash_lyra2z( int thr_id, struct work *work, uint32_t max_nonce,
                     uint64_t *hashes_done )
 {
-        uint32_t _ALIGN(64) hash[8];
-        uint32_t _ALIGN(64) endiandata[20];
-        uint32_t *pdata = work->data;
-        uint32_t *ptarget = work->target;
-        const uint32_t Htarg = ptarget[7];
-        const uint32_t first_nonce = pdata[19];
-        uint32_t nonce = first_nonce;
+	uint32_t _ALIGN(64) hash[8];
+	uint32_t _ALIGN(64) endiandata[20];
+	uint32_t *pdata = work->data;
+	uint32_t *ptarget = work->target;
+	const uint32_t Htarg = ptarget[7];
+	const uint32_t first_nonce = pdata[19];
+	uint32_t nonce = first_nonce;
 
-        if (opt_benchmark)
-                ptarget[7] = 0x0000ff;
+	if (opt_benchmark)
+		ptarget[7] = 0x0000ff;
 
-        for (int i=0; i < 19; i++) {
-                be32enc(&endiandata[i], pdata[i]);
-        }
+	for (int i=0; i < 19; i++) {
+		be32enc(&endiandata[i], pdata[i]);
+	}
 
         lyra2z_midstate( endiandata );
 
-        do {
-                be32enc(&endiandata[19], nonce);
+	do {
+		be32enc(&endiandata[19], nonce);
                 lyra2z_hash( hash, endiandata );
 
-                if (hash[7] <= Htarg && fulltest(hash, ptarget)) {
-                        work_set_target_ratio(work, hash);
-                        pdata[19] = nonce;
-                        *hashes_done = pdata[19] - first_nonce;
-                        return 1;
-                }
-                nonce++;
+		if (hash[7] <= Htarg && fulltest(hash, ptarget)) {
+			work_set_target_ratio(work, hash);
+			pdata[19] = nonce;
+			*hashes_done = pdata[19] - first_nonce;
+			return 1;
+		}
+		nonce++;
 
-        } while (nonce < max_nonce && !work_restart[thr_id].restart);
+	} while (nonce < max_nonce && !work_restart[thr_id].restart);
 
-        pdata[19] = nonce;
-        *hashes_done = pdata[19] - first_nonce + 1;
-        return 0;
+	pdata[19] = nonce;
+	*hashes_done = pdata[19] - first_nonce + 1;
+	return 0;
 }
+

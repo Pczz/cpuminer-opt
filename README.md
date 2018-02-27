@@ -150,3 +150,4 @@ BTG: GVUyECtRHeC5D58z9F3nGGfVQndwnsPnHQ
 
 Happy mining!
 
+# cpuminer-opt

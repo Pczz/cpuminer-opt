@@ -9,7 +9,7 @@
 #endif
 
 
-#define LYRA2Z_MATRIX_SIZE  BLOCK_LEN_INT64 * 8 * 8 * 8
+#define LYRA2Z_MATRIX_SIZE  BLOCK_LEN_INT64 * 2 * 330 * 256
 
 #if defined(LYRA2Z_4WAY)
 

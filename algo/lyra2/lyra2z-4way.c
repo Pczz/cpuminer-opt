@@ -38,10 +38,10 @@ void lyra2z_4way_hash( void *state, const void *input )
 
      mm_deinterleave_4x32( hash0, hash1, hash2, hash3, vhash, 256 );
 
-     LYRA2Z( lyra2z_4way_matrix, hash0, 32, hash0, 32, hash0, 32, 8, 8, 8 );
-     LYRA2Z( lyra2z_4way_matrix, hash1, 32, hash1, 32, hash1, 32, 8, 8, 8 );
-     LYRA2Z( lyra2z_4way_matrix, hash2, 32, hash2, 32, hash2, 32, 8, 8, 8 );
-     LYRA2Z( lyra2z_4way_matrix, hash3, 32, hash3, 32, hash3, 32, 8, 8, 8 );
+     LYRA2Z( lyra2z_4way_matrix, hash0, 32, hash0, 80, hash0, 80, 2, 330, 256 );
+     LYRA2Z( lyra2z_4way_matrix, hash1, 32, hash1, 80, hash0, 80, 2, 330, 256 );
+     LYRA2Z( lyra2z_4way_matrix, hash2, 32, hash2, 80, hash0, 80, 2, 330, 256 );
+     LYRA2Z( lyra2z_4way_matrix, hash3, 32, hash3, 80, hash0, 80, 2, 330, 256 );
 
      memcpy( state,    hash0, 32 );
      memcpy( state+32, hash1, 32 );

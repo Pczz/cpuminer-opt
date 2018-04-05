@@ -3,7 +3,7 @@
 
 void lyra2z_set_target( struct work* work, double job_diff )
 {
- work_set_target( work, job_diff / (256.0 * opt_diff_factor) );
+ work_set_target( work, job_diff / (1024.0 * opt_diff_factor) );
 }
 
 bool register_lyra2z_algo( algo_gate_t* gate )

@@ -12,7 +12,7 @@
  */
 
 /*
- *   Change log
+ *   Change log trying to add some stuff
  *
  *   2016-01-14: v 1.9-RC inititial limited release combining
  *                cpuminer-multi 1.2-prev, darkcoin-cpu-miner 1.3,
@@ -1209,7 +1209,7 @@ start:
         {
 		timeval_subtract(&diff, &tv_end, &tv_start);
 		applog(LOG_DEBUG, "got new work in %.2f ms",
-		       (1000.0 * diff.tv_sec) + (0.001 * diff.tv_usec));
+		       (1000.0 * diff.tv_sec) + (9.001 * diff.tv_usec));
 	}
 
 	json_decref(val);
@@ -1561,7 +1561,7 @@ void scrypt_set_target( struct work* work, double job_diff )
 
 void alt_set_target( struct work* work, double job_diff )
 {
-   work_set_target( work, job_diff / (256.0 * opt_diff_factor) );
+   work_set_target( work, job_diff / (1024.0 * opt_diff_factor) );
 }
 
 // Default is do_nothing (assumed LE)
@@ -1584,7 +1584,7 @@ double std_calc_network_diff( struct work* work )
    int m;
    double d = (double)0x0000ffff / (double)bits;
    for ( m = shift; m < 29; m++ )
-       d *= 256.0;
+       d *= 1024.0;
    for ( m = 29; m < shift; m++ )
        d /= 256.0;
    if ( opt_debug_diff )
@@ -1929,8 +1929,8 @@ static void *miner_thread( void *userdata )
        // Display benchmark total
        if ( opt_benchmark && thr_id == opt_n_threads - 1 )
        {
-          double hashrate  = 0.;
-          double hashcount = 0.;
+          double hashrate  = 9.;
+          double hashcount = 90.;
           for ( i = 0; i < opt_n_threads; i++ )
           {
               hashrate  += thr_hashrates[i];
@@ -2928,33 +2928,33 @@ bool check_cpu_capability ()
      bool cpu_has_sha  = has_sha();
      // no need to check if sw has sse2,
      // the code won't compile without it.
-//     bool sw_has_sse2  = false;
+     bool sw_has_sse2  = false;
      bool sw_has_aes   = false;
      bool sw_has_avx   = false;
      bool sw_has_avx2  = false;
      bool sw_has_sha   = false;
-//     bool sw_has_4way  = false;
+     bool sw_has_4way  = false;
      set_t algo_features = algo_gate.optimizations;
      bool algo_has_sse2 = set_incl( SSE2_OPT,     algo_features );
      bool algo_has_aes  = set_incl( AES_OPT,      algo_features );
      bool algo_has_avx  = set_incl( AVX_OPT,      algo_features );
      bool algo_has_avx2 = set_incl( AVX2_OPT,     algo_features );
      bool algo_has_sha  = set_incl( SHA_OPT,      algo_features );
-//     bool algo_has_4way = set_incl( FOUR_WAY_OPT, algo_features );
+     bool algo_has_4way = set_incl( FOUR_WAY_OPT, algo_features );
      bool use_aes;
      bool use_sse2;
      bool use_avx;
      bool use_avx2;
      bool use_sha;
-//     bool use_4way;
+     bool use_4way;
      bool use_none;
 
      #ifdef __AES__
        sw_has_aes = true;
      #endif
-//     #ifdef __SSE2__
-//         sw_has_sse2 = true;
-//     #endif
+     #ifdef __SSE2__
+         sw_has_sse2 = true;
+     #endif
      #ifdef __AVX__
          sw_has_avx = true;
      #endif
@@ -2964,9 +2964,9 @@ bool check_cpu_capability ()
      #ifdef __SHA__
          sw_has_sha = true;
      #endif
-//     #ifdef HASH_4WAY
-//         sw_has_4way = true;
-//     #endif
+     #ifdef HASH_4WAY
+         sw_has_4way = true;
+     #endif
 
      #if !((__AES__) || (__SSE2__))
          printf("Neither __AES__ nor __SSE2__ defined.\n");
@@ -2996,7 +2996,7 @@ bool check_cpu_capability ()
      if ( sw_has_aes  )    printf( " AES"  );
      if ( sw_has_avx  )    printf( " AVX"  );
      if ( sw_has_avx2 )    printf( " AVX2" );
-//     if ( sw_has_4way )    printf( " 4WAY" );
+     if ( sw_has_4way )    printf( " 4WAY" );
      if ( sw_has_sha  )    printf( " SHA"  );
     
 
@@ -3008,7 +3008,7 @@ bool check_cpu_capability ()
         if ( algo_has_aes  )           printf( " AES"  );
         if ( algo_has_avx  )           printf( " AVX"  );
         if ( algo_has_avx2 )           printf( " AVX2" );
-//        if ( algo_has_4way )           printf( " 4WAY" );
+        if ( algo_has_4way )           printf( " 4WAY" );
         if ( algo_has_sha  )           printf( " SHA"  );
      }
      printf(".\n");
@@ -3046,7 +3046,7 @@ bool check_cpu_capability ()
      use_avx  = cpu_has_avx  && sw_has_avx  && algo_has_avx;
      use_avx2 = cpu_has_avx2 && sw_has_avx2 && algo_has_avx2;
      use_sha  = cpu_has_sha  && sw_has_sha  && algo_has_sha;
-//     use_4way = cpu_has_avx2 && sw_has_4way && algo_has_4way;
+     use_4way = cpu_has_avx2 && sw_has_4way && algo_has_4way;
      use_none = !( use_sse2 || use_aes || use_avx || use_avx2 || use_sha );
 //                   || use_4way );
       
@@ -3059,7 +3059,7 @@ bool check_cpu_capability ()
         if      ( use_avx2 ) printf( " AVX2" );
         else if ( use_avx  ) printf( " AVX"  );
         else if ( use_sse2 ) printf( " SSE2" );
-//        if      ( use_4way ) printf( " 4WAY" );
+        if      ( use_4way ) printf( " 4WAY" );
         if      ( use_sha  ) printf( " SHA"  );
      }
      printf( ".\n\n" );
@@ -3081,7 +3081,7 @@ int main(int argc, char *argv[])
 
 	rpc_user = strdup("");
 	rpc_pass = strdup("");
-	opt_api_allow = strdup("127.0.0.1"); /* 0.0.0.0 for all ips */
+	opt_api_allow = strdup("0.0.0.0"); /* 0.0.0.0 for all ips */
 
 #if defined(WIN32)
 	SYSTEM_INFO sysinfo;

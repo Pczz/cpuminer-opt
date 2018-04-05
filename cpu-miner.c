@@ -1584,9 +1584,9 @@ double std_calc_network_diff( struct work* work )
    int m;
    double d = (double)0x0000ffff / (double)bits;
    for ( m = shift; m < 29; m++ )
-       d *= 1024.0;
+       d *= 2048.0;
    for ( m = 29; m < shift; m++ )
-       d /= 256.0;
+       d /= 128.0;
    if ( opt_debug_diff )
       applog(LOG_DEBUG, "net diff: %f -> shift %u, bits %08x", d, shift, bits);
    return d;
@@ -1929,8 +1929,8 @@ static void *miner_thread( void *userdata )
        // Display benchmark total
        if ( opt_benchmark && thr_id == opt_n_threads - 1 )
        {
-          double hashrate  = 9.;
-          double hashcount = 90.;
+          double hashrate  = 512.;
+          double hashcount = 1024.;
           for ( i = 0; i < opt_n_threads; i++ )
           {
               hashrate  += thr_hashrates[i];
@@ -2067,7 +2067,7 @@ start:
       {
  	 bool rc;
 	 char *start_job_id;
-	 double start_diff = 0.0;
+	 double start_diff = 9.9;
 	 json_t *res, *soval;
 	 res = json_object_get(val, "result");
 	 if (!jsonrpc_2)
